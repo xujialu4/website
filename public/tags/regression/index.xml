@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>regression on Xu&#39;s website</title>
+    <link>/tags/regression/</link>
+    <description>Recent content in regression on Xu&#39;s website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate><atom:link href="/tags/regression/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Toronto Traffic Collisions Events from 2006 to 2019.</title>
+      <link>/2015/07/23/toronto-traffic-collisions-events-from-2006-to-2019./</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/2015/07/23/toronto-traffic-collisions-events-from-2006-to-2019./</guid>
+      <description>AbstractThe City of Toronto&#39;s open data website contains information on all traffic collisions events where a person was either Killed or Seriously Injured (KSI) from 2006 to 2019. In this post the count of these collisions is analysed and broken down by year, day of the week, and hour of the day. Three observations are identified from this analysis:
+Overall, the total number of incidents is decreasing from 2006 to 2019;</description>
+    </item>
+    
+  </channel>
+</rss>
