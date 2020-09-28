@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.75.1" />
+
+
+<title>Toronto Traffic Collisions Events from 2006 to 2019. - Xu&#39;s website</title>
+<meta property="og:title" content="Toronto Traffic Collisions Events from 2006 to 2019. - Xu&#39;s website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">6 min read</span>
+    
+
+    <h1 class="article-title">Toronto Traffic Collisions Events from 2006 to 2019.</h1>
+
+    
+    <span class="article-date">2020-09-25</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>Jialu Xu</p>
+<div id="abstract" class="section level1">
+<h1>Abstract</h1>
+<p>The City of Toronto's open data website contains information on all traffic collisions events where a person was either Killed or Seriously Injured (KSI) from 2006 to 2019. In this post the count of these collisions is analysed and broken down by year, day of the week, and hour of the day. Three observations are identified from this analysis:</p>
+<ol style="list-style-type: decimal">
+<li><p>Overall, the total number of incidents is decreasing from 2006 to 2019;</p></li>
+<li><p>Collisions occurred most during weekdays' rushing hours and weekends' early mornings; and</p></li>
+<li><p>Nearly half of the collisions occur at locations without a traffic control device.</p></li>
+</ol>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Traffic crashes have been and continue to be a major contributor of human and economic costs to society. In addition to the devastation of lost lives, injuries from transport incidents across Canada are estimated to cost $4.3 billion each year. The overwhelming majority of these accidents are entirely preventable (Parachute, 2015). Even though Toronto’s road fatality rate is among the lowest compared to other large North American cities (National Highway Traffic Safety Administration, 2014), traffic-related fatalities and injuries are still one of the major causes of death. In 2016, 160,315 injuries happened in Toronto along with 1898 fatalities due to vehicle collisions (Transport Canada, 2018).</p>
+<p>This post utilizes Toronto traffic collisions data to explore and gain a better understanding of patterns of collisions in Toronto between 2006 to 2019, at different levels of scale. This is done through the presentation of a triplet of data visualizations.</p>
+</div>
+<div id="analysis" class="section level1">
+<h1>Analysis</h1>
+<div id="r-libraries" class="section level2">
+<h2>R libraries</h2>
+<p>The following R libraries were loaded for this analysis.</p>
+<pre class="r"><code>library(plyr)
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+library(patchwork)
+library(readr)
+library(opendatatoronto)</code></pre>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>This post uses Motor Vehicle Collisions involving Killed or Seriously Injured Persons data from The City of Toronto’s open data website. This dataset includes all traffic collisions events where a person was either Killed or Seriously Injured (KSI) from 2006 to 2019. While past road safety analyses focused on a reduction in all collisions including less serious collision types such as property-damage-only collisions (Amoros et al, 2007), this data focuses on the collisions that result in death and serious injuries (injuries where a person is admitted to a hospital), called Killed and Seriously Injured or KSI collisions. This switch is believed to be beneficial because it places a greater emphasis on vulnerable road users, such as pedestrians, cyclists and motorcyclists, who are over-represented in KSI collisions.</p>
+<p>In this dataset a row refers to a single collision event and contains the following information:</p>
+<p>Date Collision Occurred;</p>
+<p>Street Collision Occurred;</p>
+<p>Traffic Control Type;</p>
+<p>Weather and Road Conditions;</p>
+<p>Injury Information;</p>
+<p>Reasons for Collisions;</p>
+<p>Driver Conditions</p>
+<p>More information on the dataset can be located at <a href="https://open.toronto.ca/dataset/motor-vehicle-collisions-involving-killed-or-seriously-injured-persons/" class="uri">https://open.toronto.ca/dataset/motor-vehicle-collisions-involving-killed-or-seriously-injured-persons/</a></p>
+<p>The second step is to download the dataset from the above mentioned website into the working directory and load it into a dataframe.</p>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<p>KSI collisions in Toronto have been trending downwards despite some spikes in certain years. The total number of collisions in 2019 has reduced nearly half compared to 2006. In 2016 the city launched the Vision Zero Road Safety Plan to eliminate fatalities and serious injuries in the transportation system. Hopefully the collisions will reduce further if the plan to implement effectively.</p>
+<pre class="r"><code>#aggregate total number of collisions by each year
+ag &lt;- as.data.frame(table(accident_data$YEAR))
+colnames(ag)[2] &lt;- &quot;Number&quot;
+colnames(ag)[1] &lt;- &quot;Year&quot;
+
+#plot
+ ggplot(ag, aes(x=Year, y=Number,group=1)) +
+  geom_line(color=&quot;#69b3a2&quot;) +
+    annotate(geom=&quot;text&quot;, x=which(ag$Year == &#39;2016&#39;), y=1200, 
+             label=&quot;The city launched Vision Zero Road Safety Plan 
+             to reduce traffic-related fatalities 
+             and serious injuries. &quot;) +
+  geom_vline(xintercept=which(ag$Year == &#39;2016&#39;), color=&quot;orange&quot;)+
+ labs(title = &quot;Number of Toronto Traffic Collisions Events by Year&quot;,
+      
+       caption=&quot;Data Source: City of Toronto&quot;) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())</code></pre>
+<p><img src="/post/2015-07-23-r-rmarkdown_files/figure-html/pressure-1.png" width="672" /></p>
+<p>We will then summarize the data by day of the week (DOW) and by hour of the day (HOD) to understand peak days and time periods for KSI collisions. First, we need to prepare our dataset. The lubridate package is used to gather DOW information from the date variable.</p>
+<pre class="r"><code>
+# Set time zone and language
+Sys.setlocale(&quot;LC_TIME&quot;, &quot;English&quot;)
+
+# Generate day of week using date
+accident_data$wday &lt;- wday(accident_data$DATE, label = TRUE)
+
+# Create summary table
+dayHour &lt;- ddply(accident_data, c( &quot;HOUR&quot;, &quot;wday&quot;), summarise,
+                    N    = length(DATE))
+
+#reverse order of months for easier graphing
+dayHour$wday &lt;- factor(dayHour$wday, levels=rev(levels(dayHour$wday)))
+attach(dayHour)
+
+#Assign color variables
+col1 = &quot;#d8e1cf&quot; 
+col2 = &quot;#438484&quot;</code></pre>
+<p>From the heatmap, it is clear that the distribution of collisions over the time of the day exhibits a different pattern on weekdays versus on weekends. During the week, collisions appear to be more frequent in the afternoon (2pm – 6pm). These higher collision numbers may be attributed to the increased pedestrian and vehicle volumes during the weekday when people are generally heading to and from work, school, etc. While many weekend crashes occur late at night and early in the morning (10PM – 3AM), when many people leave the bars. There seems to be little temporal variation from Monday through to Thursday, although the number of collisions increases towards the end of the week.</p>
+<p>Identification of collision patterns can provide some guidance to policy makers when they should implement intervention action plans. For example, more strict enforcement of speed limits could be implemented during peak time of collisions. We could also use spatial hot-spots to find where collisions occur most frequently and which intersections or roadways are persistent problem areas for collisions over time.</p>
+<pre class="r"><code># plot heatmap
+ggplot(dayHour, aes(HOUR, wday)) + geom_tile(aes(fill = N),colour = &quot;white&quot;, na.rm = TRUE) +
+  scale_fill_gradient(low = col1, high = col2) + 
+    
+  guides(fill=guide_legend(title=&quot;Total Incidents&quot;)) +
+  theme_bw() + theme_minimal() + 
+  labs(title = &quot;Toronto Traffic Collisions Events by Day of the Week and Time of the Week&quot;,
+       x = &quot;Time of the day&quot;, y = &quot;Day of the Week&quot;,
+       caption=&quot;Data Source: City of Toronto&quot;) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())</code></pre>
+<p><img src="/post/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Most of KSI collisions occured at traffic signals and un-controlled locations. Of all the collisions, 42.1% occurred at a traffic signal, 47.8% occurred where there was no control and 7.9% occurred at a stop sign. These are the three most common type of traffic controls, which could help to explain why more accidents occurred at these three types of control, as opposed to the other types of controls. In the next steps, we could use data on distribution of traffic control types to help understand if the high counts are also proportionally high, as well as use regression models to test if there are traffic controls in place at an intersection, whether there will be fewer accidents than at intersections that do not have traffic controls.</p>
+<pre class="r"><code># plot traffic control distributions where collisions happened
+accident_data %&gt;%
+  group_by(TRAFFCTL) %&gt;%
+  tally() %&gt;%
+  ggplot()+
+  geom_col(aes(x=reorder(TRAFFCTL,n),y=I((n/sum(n)))*100),position=&quot;dodge&quot;,fill=&quot;#69b3a2&quot;)+
+  geom_text(aes(x=reorder(TRAFFCTL,n),y=I((n/sum(n))*100),label=round((n/sum(n))*100,1),hjust=+1.2),colour=&quot;black&quot;)+
+ 
+  labs(title=&quot;Near half of reported collisions happened where no traffic controls exist&quot;,
+       subtitle=&quot;Data from 2006 to 2019&quot;,
+       x=&quot;&quot;,
+       y=&quot;Percent of Total&quot;,
+       caption=&quot;Data Source: City of Toronto&quot;)+
+  scale_y_continuous(breaks=seq(0,100,10))+
+  coord_flip()</code></pre>
+<p><img src="/post/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="reference" class="section level2">
+<h2>Reference</h2>
+<p>Amoros, E. M., Martin, J.-L. M., Chiron, M. M. &amp; Laumon, B. (2007) Road crash casualties: characteristics of police injury severity misclassification, Journal of Trauma-Injury Infection &amp; Critical Car, 62(2), 482-490.</p>
+<p>Canadian Motor Vehicle Traffic Collision Statistics: 2016 - Transport Canada (2018) Retrieved from <a href="https://www.tc.gc.ca/eng/motorvehiclesafety/canadian-motor-vehicle-traffic-collision-statistics-2016.html" class="uri">https://www.tc.gc.ca/eng/motorvehiclesafety/canadian-motor-vehicle-traffic-collision-statistics-2016.html</a></p>
+<p>National Highway Traffic Safety Administration. (2014) Traffic Safety Facts 2014. Retrieved from <a href="https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/812261" class="uri">https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/812261</a></p>
+<p>Parachute (2015) The Cost of Injury in Canada. Parachute: Toronto, ON</p>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
