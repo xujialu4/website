@@ -1,6 +1,6 @@
 ---
 title: "Toronto Traffic Collisions Events from 2006 to 2019."
-author: "Xu"
+author: "Jialu Xu"
 date: 2020-09-25
 bibliograph: "reference.bib"
 categories: ["R"]
@@ -10,6 +10,7 @@ tags: ["R Markdown", "plot", "regression"]
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE)
 ```
+Jialu Xu
 
 # Abstract
 
