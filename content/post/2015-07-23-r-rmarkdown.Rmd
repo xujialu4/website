@@ -28,6 +28,8 @@ Traffic crashes have been and continue to be a major contributor of human and ec
 
 This post utilizes Toronto traffic collisions data to explore and gain a better understanding of patterns of collisions in Toronto between 2006 to 2019, at different levels of scale. This is done through the presentation of a triplet of data visualizations.
 
+I’ve put up a GitHub repository containing the code needed to reproduce these visualizations here. https://github.com/xujialu4/website
+
 # Analysis
 
 ## R libraries
@@ -70,6 +72,19 @@ The second step is to download the dataset from the above mentioned website into
 ```{r, include=FALSE}
 
  accident_data <- read_csv("D:/Motor Vehicle Collisions with KSI Data.csv")
+
+## Here I downloaded the data and accessed it from local filepath to save processing time. You can also get the data directly from the website with below codes:
+
+# get package
+package_accident <- show_package("0b6d3a00-7de1-440b-b47c-7252fd13929f")
+
+# get all resources for this package
+resources <- list_package_resources("0b6d3a00-7de1-440b-b47c-7252fd13929f")
+
+# get data
+accident_data <- resources %>%
+  get_resource()
+
 ```
 ## Results
 
